@@ -1,19 +1,18 @@
 angular.module('app.components.search', [])
-    .controller("SearchController", function($scope, TMDBAPI, searchServices) {
-        angular.extend($scope, TMDBAPI);
+    .controller("SearchController", function($scope, $location, TMDBAPI, SearchServices) {
         $scope.query = "";
         $scope.tvResults = [];
         $scope.peopleResults = [];
         $scope.searchSubmit = function(query) {
             TMDBAPI.getMultiSearch(query).then(function(resp) {
                 var results = resp.results;
-                $scope.tvResults = searchServices.filterTVResults(results);
+                $scope.tvResults = SearchServices.filterTVResults(results);
             })
         }
         $scope.resultSelected = function(tmdbID) {
             TMDBAPI.getTVExternalIds(tmdbID).then(function(resp) {
                 var imdbID = resp.imdb_id;
-                console.log(imdbID);
+                $location.path('/tv/' + imdbID)
             })
         }
     })

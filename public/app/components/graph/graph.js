@@ -13,34 +13,17 @@ var infoset = [];
 var showName = '';
 var seasonAvg = [];
 
-angular.module('app.components.tv', [])
-    .controller("TVController", function($scope, $stateParams, OMDBAPI) {
-        $scope.tvRatings = {};
-        var getTVRatings = function(imdbID, resultsObj, currentSeason, totalSeasons) {
-            currentSeason = currentSeason || 1;
-            totalSeasons = totalSeasons || 1;
-            if (currentSeason <= totalSeasons) {
-                OMDBAPI.getTVSeasonRatings(imdbID, currentSeason).then(function(resp) {
-                    resultsObj['Title'] = resp['Title'];
-                    if (!resultsObj['Seasons']) {
-                        resultsObj['Seasons'] = {};
-                    }
-                    resultsObj['Seasons'][currentSeason.toString()] = resp["Episodes"];
-                    totalSeasons = parseInt(resp["totalSeasons"]);
-                    currentSeason = parseInt(resp["Season"]);
-                    getTVRatings(imdbID, resultsObj, currentSeason + 1, totalSeasons)
-                    data_url = resultsObj;
-                    drawGraph();
-                })
-            }
-        }
-        getTVRatings($stateParams.imdbID, $scope.tvRatings);
-    })
+angular.module('app.directive', [])
     .directive('graph', function($parse, $window) {
         return {
             restrict: 'EA',
             template: '<section class="graph"><div id="graph"></div></section>',
             link: function(scope, elem, attrs) {
+                // watch collection to make changes
+                scope.$watchCollection('results', function(newVal, oldVal) {
+                    data_url = newVal || {};
+                    drawGraph();
+                });
             }
         };
     });
@@ -75,26 +58,22 @@ var drawGraph = function() {
     //Function for filling up the info dataset
     //Function for filling up the episode dataset
     //iterate over episodes and add data to d3 datasets
-    var seasons = data_url["Seasons"] || {};
-    if (seasons) {
-        each(seasons, function(season, seasonNumber) {
-            each(season, function(episode, key) {
-                if (episode["imdbRating"] !== "N/A") {
-                    //get episode data
-                    var epNum = parseInt(episode["Episode"]);
-                    var rating = parseFloat(episode["imdbRating"]);
-                    var showTitle = episode["Title"];
-                    var season = parseInt(seasonNumber);
-                    //fill the d3 dataset variables
-                    episodedataset.push([epId, rating]);
-                    ratingdataset.push(rating);
-                    infoset.push([showTitle, rating, season, epNum]);
-                    seasonAvg.push([season, rating]);
-                    epId++;
-                }
-            });
-        })
-    }
+    var episodes = data_url["Episodes"] || {};
+    each(episodes, function(episode, key) {
+        if (episode["imdbRating"] !== "N/A") {
+            //get episode data
+            var epNum = parseInt(episode["Episode"]);
+            var rating = parseFloat(episode["imdbRating"]);
+            var showTitle = episode["Title"];
+            var season = parseInt(data_url["Season"]);
+            //fill the d3 dataset variables
+            episodedataset.push([epId, rating]);
+            ratingdataset.push(rating);
+            infoset.push([showTitle, rating, season, epNum]);
+            seasonAvg.push([season, rating]);
+            epId++;
+        }
+    });
 
     var seasonScore = [];
 
@@ -167,6 +146,7 @@ var drawGraph = function() {
         .attr("x", 40)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
+        .style("opacity", 0)
         .text("IMDB Rating");
 
     //Draw Graph (Lines and Points)
@@ -181,11 +161,11 @@ var drawGraph = function() {
         .interpolate('monotone');
 
     /*append line*/
-    // var path = svg.append('path')
-    //     .attr({
-    //         'd': lines(episodedataset),
-    //         'class': 'lineChart'
-    //     });
+    var path = svg.append('path')
+        .attr({
+            'd': lines(episodedataset),
+            'class': 'lineChart'
+        });
 
     svg.select('.lineChart')
         .style('opacity', 0)
@@ -203,7 +183,7 @@ var drawGraph = function() {
     /*point attributes*/
     points.attr('cy', 0)
         .transition()
-        .duration(100)
+        .duration(1500)
         .delay(function(d, i) {
             return (i * 100) + 500;
         })
@@ -395,4 +375,3 @@ var drawGraph = function() {
         trendLine();
     }
 };
-

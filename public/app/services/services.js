@@ -14,10 +14,13 @@ angular.module('app.services', [])
         var getTVRatings = function(imdbID, resultsObj, currentSeason, totalSeasons) {
             currentSeason = currentSeason || 1;
             totalSeasons = totalSeasons || 1;
-            console.log(currentSeason);
             if (currentSeason <= totalSeasons) {
                 OMDBAPI.getTVSeasonRatings(imdbID, currentSeason).then(function(resp) {
-                    resultsObj[currentSeason.toString()] = resp["Episodes"];
+                    resultsObj['Title'] = resp['Title'];
+                    if (!resultsObj['Seasons']) {
+                        resultsObj['Seasons'] = {};
+                    }
+                    resultsObj['Seasons'][currentSeason.toString()] = resp["Episodes"];
                     totalSeasons = parseInt(resp["totalSeasons"]);
                     currentSeason = parseInt(resp["Season"]);
                     getTVRatings(imdbID, resultsObj, currentSeason + 1, totalSeasons)

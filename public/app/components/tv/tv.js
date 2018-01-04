@@ -1,7 +1,13 @@
 // settings
-var w = 1100;
-var h = 400;
-var padding = 25;
+var boardSettings = {
+    width: 1100,
+    height: 400,
+    padding: 25,
+    getXMin: function() {return this.padding},
+    getXMax: function() {return this.width - this.padding},
+    getYMin: function() {return this.height - this.padding},
+    getYMax: function() {return this.padding}
+};
 // data
 var data_url = {};
 var epId = 1;
@@ -12,13 +18,15 @@ var ratingdataset = [];
 var infoset = [];
 var showName = '';
 var seasonAvg = [];
+var totalSeasons = 1;
+var firstEpisodes = [];
+var xAxisLabels = [];
 
 angular.module('app.components.tv', [])
     .controller("TVController", function($scope, $stateParams, OMDBAPI) {
         $scope.tvRatings = {};
-        var getTVRatings = function(imdbID, resultsObj, currentSeason, totalSeasons) {
+        var getTVRatings = function(imdbID, resultsObj, currentSeason) {
             currentSeason = currentSeason || 1;
-            totalSeasons = totalSeasons || 1;
             if (currentSeason <= totalSeasons) {
                 OMDBAPI.getTVSeasonRatings(imdbID, currentSeason).then(function(resp) {
                     resultsObj['Title'] = resp['Title'];
@@ -28,9 +36,11 @@ angular.module('app.components.tv', [])
                     resultsObj['Seasons'][currentSeason.toString()] = resp["Episodes"];
                     totalSeasons = parseInt(resp["totalSeasons"]);
                     currentSeason = parseInt(resp["Season"]);
-                    getTVRatings(imdbID, resultsObj, currentSeason + 1, totalSeasons)
+                    getTVRatings(imdbID, resultsObj, currentSeason + 1)
                     data_url = resultsObj;
-                    drawGraph();
+                    if (currentSeason == totalSeasons) {
+                        drawGraph();
+                    }
                 })
             }
         }
@@ -54,22 +64,11 @@ var drawGraph = function() {
         episodedataset = [];
         ratingdataset = [];
         infoset = [];
+        firstEpisodes = [];
+        xAxisLabels = [];
     }
     //update showName
     showName = data_url['Title'];
-
-    // All purpose each function
-    var each = function(input, callback) {
-        if (input.constructor === Object) {
-            for (var key in input) {
-                callback(input[key], key, input);
-            }
-        } else {
-            for (var i = 0; i < input.length; i++) {
-                callback(input[i], i, input);
-            }
-        }
-    };
 
 
     //Function for filling up the info dataset
@@ -77,8 +76,15 @@ var drawGraph = function() {
     //iterate over episodes and add data to d3 datasets
     var seasons = data_url["Seasons"] || {};
     if (seasons) {
-        each(seasons, function(season, seasonNumber) {
-            each(season, function(episode, key) {
+        ratingdataset = [];
+        infoset = [];
+        seasonAvg = [];
+        firstEpisodes = [];
+        xAxisLabels = [];
+        epId = 1;
+        for (var seasonNumber in seasons) {
+            var season = seasons[seasonNumber];
+            season.forEach(function(episode) {
                 if (episode["imdbRating"] !== "N/A") {
                     //get episode data
                     var epNum = parseInt(episode["Episode"]);
@@ -86,14 +92,18 @@ var drawGraph = function() {
                     var showTitle = episode["Title"];
                     var season = parseInt(seasonNumber);
                     //fill the d3 dataset variables
+                    if (epNum == 1) {
+                        firstEpisodes.push(epId);
+                        xAxisLabels.push("Season " + season);
+                    }
                     episodedataset.push([epId, rating]);
                     ratingdataset.push(rating);
                     infoset.push([showTitle, rating, season, epNum]);
                     seasonAvg.push([season, rating]);
                     epId++;
                 }
-            });
-        })
+            })
+        }
     }
 
     var seasonScore = [];
@@ -113,8 +123,8 @@ var drawGraph = function() {
 
     var svg = d3.select('#graph')
         .append('svg')
-        .attr('width', w)
-        .attr('height', h);
+        .attr('width', boardSettings.width)
+        .attr('height', boardSettings.height);
 
     svg.call(tip);
 
@@ -124,29 +134,41 @@ var drawGraph = function() {
         .domain([0, d3.max(episodedataset, function(d) {
             return d[0];
         })])
-        .range([padding, w - padding]);
+        .range([boardSettings.getXMin(), boardSettings.getXMax()]);
 
     /*y scale*/ //based on rating data set
     ratingdataset.sort();
     var yScale = d3.scale.linear()
         .domain([ratingdataset[0] - 0.2, ratingdataset[ratingdataset.length - 1] + 0.1])
-        .range([h - padding, padding]);
+        .range([boardSettings.getYMin(), boardSettings.getYMax()]);
 
     /*x axis*/
+    firstEpisodes = firstEpisodes.map(function(episodeNum) {
+        return xScale(episodeNum);
+    })
+    firstEpisodes.unshift(boardSettings.getXMin());
+    firstEpisodes.push(boardSettings.getXMax());
+    xAxisLabels.unshift("");
+    xAxisLabels.push("");
+
+    var xAxisScale = d3.scale.ordinal()
+        .domain(xAxisLabels)
+        .range(firstEpisodes);
+
     var xAxis = d3.svg.axis()
-        .scale(xScale)
+        .scale(xAxisScale)
         .orient('bottom');
 
     /*append x axis*/
     svg.append('g')
         .attr({
             'class': 'xaxis',
-            'transform': 'translate(0,' + (h - padding) + ')'
+            'transform': 'translate(0,' + boardSettings.getYMin() + ')'
         })
         .call(xAxis)
         .append("text")
         .attr("y", -12)
-        .attr("x", w - 35)
+        .attr("x", boardSettings.width - 35)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
         .text("Episode");
@@ -159,7 +181,7 @@ var drawGraph = function() {
     svg.append('g')
         .attr({
             'class': 'yaxis',
-            'transform': 'translate(' + padding + ',0)'
+            'transform': 'translate(' + boardSettings.getXMin() + ',0)'
         })
         .call(yAxis)
         .append("text")
@@ -169,37 +191,25 @@ var drawGraph = function() {
         .style("text-anchor", "end")
         .text("IMDB Rating");
 
-    //Draw Graph (Lines and Points)
-    /*define line*/
-    var lines = d3.svg.line()
-        .x(function(d) {
-            return xScale(d[0])
-        })
-        .y(function(d) {
-            return yScale(d[1])
-        })
-        .interpolate('monotone');
-
-    /*append line*/
-    // var path = svg.append('path')
-    //     .attr({
-    //         'd': lines(episodedataset),
-    //         'class': 'lineChart'
-    //     });
-
-    svg.select('.lineChart')
-        .style('opacity', 0)
-        .transition()
-        .duration(2500)
-        .delay(1000)
-        .style('opacity', 1);
-
     /*add points*/
     var points = svg.selectAll('circle')
         .data(episodedataset)
         .enter()
         .append('circle');
 
+    function scaleDuration(datasetLength) {
+        return (1/datasetLength) * 1000;
+    }
+    function getPointsRadius() {
+        var widthPerPoint = boardSettings.width/episodedataset.length;
+        if (widthPerPoint < 2) {
+            return 2;
+        } else if (widthPerPoint > 10) {
+            return 10;
+        } else {
+            return widthPerPoint;
+        }
+    }
     /*point attributes*/
     points.attr('cy', 0)
         .transition()
@@ -215,7 +225,7 @@ var drawGraph = function() {
             'cy': function(d) {
                 return yScale(d[1]);
             },
-            'r': 7,
+            'r': getPointsRadius(),
             'class': 'datapoint',
             'id': function(d, i) {
                 return i;
@@ -225,7 +235,7 @@ var drawGraph = function() {
 
     d3.select('#graph svg')
         .append("text")
-        .attr("x", w / 2)
+        .attr("x", boardSettings.width / 2)
         .attr("y", 14)
         .attr("text-anchor", "middle")
         .style("fill", "#2FFF4D")
@@ -240,21 +250,12 @@ var drawGraph = function() {
         var y2 = 0;
         var len = episodedataset.length;
 
-        each(episodedataset, function(item, index) {
-            x1 += item[0];
-        });
-
-        each(episodedataset, function(item, index) {
-            y1 += item[1];
-        });
-
-        each(episodedataset, function(item, index) {
-            x2 += (item[0] * item[1]);
-        });
-
-        each(episodedataset, function(item, index) {
-            y2 += (item[0] * item[0]);
-        });
+        episodedataset.forEach(function(dataSet){
+            x1 += dataSet[0];
+            y1 += dataSet[1];
+            x2 += (dataSet[0] * dataSet[1]);
+            y2 += (dataSet[0] * dataSet[0]);
+        })
 
         var slope = (((len * x2) - (x1 * y1)) / ((len * y2) - (x1 * x1)))
         var intercept = ((y1 - (slope * x1)) / len)
@@ -292,103 +293,6 @@ var drawGraph = function() {
                 return yScale(d[3]);
             })
             .style("stroke", "rgb(47,255,77)")
-        //ShouldI function
-        var avg = y1 / len;
-        if (avg >= 7) {
-            if (slope > .05) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("You're Missing Out!");
-            } else if (slope > 0) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Yes!");
-            } else if (slope < 0 && slope > -0.03) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Sure");
-            } else if (slope < 0 && slope > -0.04) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Meh.");
-            } else {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Eeeeh...");
-            }
-        } else {
-            if (slope > .05) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Go For It!");
-            } else if (slope > 0.03) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Yup");
-            } else if (slope > 0) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Eeeeh...");
-            } else if (slope < 0 && slope > -0.04) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("No.");
-            } else {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("HAHAHA...Oh You were Serious...");
-            }
-        }
     };
     //d3.select('#graph svg').text('');
     if (data_url["Title"] !== undefined) {

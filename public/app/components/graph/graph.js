@@ -12,7 +12,7 @@ var ratingdataset = [];
 var infoset = [];
 var showName = '';
 var seasonAvg = [];
-
+debugger
 angular.module('app.directive', [])
     .directive('graph', function($parse, $window) {
         return {
@@ -78,6 +78,7 @@ var drawGraph = function() {
     var seasonScore = [];
 
     //This reveals data when you mouse over nodes.
+    //CHANGE TIP HERE
     var tip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([-10, 0])
@@ -151,28 +152,28 @@ var drawGraph = function() {
 
     //Draw Graph (Lines and Points)
     /*define line*/
-    var lines = d3.svg.line()
-        .x(function(d) {
-            return xScale(d[0])
-        })
-        .y(function(d) {
-            return yScale(d[1])
-        })
-        .interpolate('monotone');
+    // var lines = d3.svg.line()
+    //     .x(function(d) {
+    //         return xScale(d[0])
+    //     })
+    //     .y(function(d) {
+    //         return yScale(d[1])
+    //     })
+    //     .interpolate('monotone');
 
-    /*append line*/
-    var path = svg.append('path')
-        .attr({
-            'd': lines(episodedataset),
-            'class': 'lineChart'
-        });
+    // /*append line*/
+    // var path = svg.append('path')
+    //     .attr({
+    //         'd': lines(episodedataset),
+    //         'class': 'lineChart'
+    //     });
 
-    svg.select('.lineChart')
-        .style('opacity', 0)
-        .transition()
-        .duration(2500)
-        .delay(1000)
-        .style('opacity', 1);
+    // svg.select('.lineChart')
+    //     .style('opacity', 0)
+    //     .transition()
+    //     .duration(2500)
+    //     .delay(1000)
+    //     .style('opacity', 1);
 
     /*add points*/
     var points = svg.selectAll('circle')
@@ -184,9 +185,9 @@ var drawGraph = function() {
     points.attr('cy', 0)
         .transition()
         .duration(1500)
-        .delay(function(d, i) {
-            return (i * 100) + 500;
-        })
+        // .delay(function(d, i) {
+        //     return (i * 100) + 500;
+        // })
         .ease('elastic')
         .attr({
             'cx': function(d) {
@@ -273,102 +274,6 @@ var drawGraph = function() {
             })
             .style("stroke", "rgb(47,255,77)")
         //ShouldI function
-        var avg = y1 / len;
-        if (avg >= 7) {
-            if (slope > .05) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("You're Missing Out!");
-            } else if (slope > 0) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Yes!");
-            } else if (slope < 0 && slope > -0.03) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Sure");
-            } else if (slope < 0 && slope > -0.04) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Meh.");
-            } else {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Eeeeh...");
-            }
-        } else {
-            if (slope > .05) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Go For It!");
-            } else if (slope > 0.03) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Yup");
-            } else if (slope > 0) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("Eeeeh...");
-            } else if (slope < 0 && slope > -0.04) {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("No.");
-            } else {
-                d3.select('#graph svg')
-                    .append("text")
-                    .attr("x", w / 2)
-                    .attr("y", 350)
-                    .attr("text-anchor", "middle")
-                    .style("fill", "#2FFF4D")
-                    .attr("font-size", "34px")
-                    .text("HAHAHA...Oh You were Serious...");
-            }
-        }
     };
     //d3.select('#graph svg').text('');
     if (data_url["Title"] !== undefined) {

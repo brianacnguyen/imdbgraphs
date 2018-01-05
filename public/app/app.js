@@ -4,19 +4,32 @@ angular.module("app", [
     'app.api.omdb',
     'app.services',
     'app.components.search',
+    'app.components.graph',
     'app.components.tv',
 ])
 .config(function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise("/");
     $stateProvider
-        .state("search", {
-            templateUrl: "/app/components/search/search.html",
+        .state("home", {
             url: "/",
-            controller: "SearchController"
+            views: {
+                "searchBar": {
+                    templateUrl: "/app/components/search/search.html",
+                    controller: "SearchController"
+                }
+            }
         })
         .state("tv", {
-            templateUrl: "/app/components/tv/tv.html",
             url: "/tv/{imdbID}",
-            controller: "TVController"
+            views: {
+                "searchBar": {
+                    templateUrl: "/app/components/search/search.html",
+                    controller: "SearchController"
+                },
+                "tvGraph" : {
+                    templateUrl: "/app/components/tv/tv.html",
+                    controller: "TVController"
+                }
+            }
         })
 })

@@ -1,0 +1,19 @@
+
+
+
+@mixin bp($point) {
+
+  // Loop through pre-defined breakpoints located in
+  // globals/settings/responsive-setting
+  @each $breakpoint in $breakpoints {
+    $alias:     nth($breakpoint, 1);
+    $condition: nth($breakpoint, 2);
+
+
+    @if $point == $alias {
+      @media #{$condition} { @content; }
+    }
+
+
+  } // End Breakpoint Loop
+}

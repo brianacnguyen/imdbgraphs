@@ -11,10 +11,14 @@
     <script src="app/api/tmdbAPI.js"></script>
     <script src="app/components/search/search.js"></script>
     <script src="app/components/graph/d3tip.js"></script>
+    <script src="app/components/graph/graph.js"></script>
     <script src="app/components/tv/tv.js"></script>
     <script src="app/app.js"></script>
 </head>
 <body ng-app="app">
-    <div ui-view></div>
+    <div ui-view="intro"></div>
+    <div ui-view="searchBar"></div>
+    <div ui-view="searchResults"></div>
+    <div ui-view="tvGraph">
 </body>
 </html>

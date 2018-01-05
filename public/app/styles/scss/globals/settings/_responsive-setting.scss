@@ -1,0 +1,23 @@
+///*------------------------------------*\
+//    ~ SETTINGS-RESPONSIVE
+//\*------------------------------------*/
+
+// Hold our breakpoint aliases and conditions in a list.
+//
+// These can be invoked later on via the `media-query()` mixin found in
+// `_tools.responsive`.
+
+$breakpoints: (
+    "screen-iphone"         "screen and (min-width: 320px)",
+    "screen-iphone6"           "screen and (min-width: 375px)",
+    "screen-iphone6plus"           "screen and (min-width: 416px)",
+    "screen-tablet"           "screen and (min-width: 768px)",
+    "screen-largetablet"           "screen and (min-width: 800px)",
+    "screen-desktop"           "screen and (min-width: 1024px)",
+    "screen-largedesktop"           "screen and (min-width: 1440px)",
+    "print"           "print"
+) !default;
+body {
+    overflow: auto!important;
+    max-height: 100vh;
+}

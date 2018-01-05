@@ -1,0 +1,10 @@
+.s-body {
+    min-width: 320px;
+    min-height: 480px;
+    position: relative;
+    margin-top: $s-header-height;
+}
+
+.scroll-disabled {
+    overflow: hidden;
+}

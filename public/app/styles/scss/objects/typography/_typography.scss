@@ -1,0 +1,212 @@
+/*doc
+---
+title: Typography
+name: Typography
+category: Objects - Typography
+---
+##### Sizes
+
+```html_example
+<h1>h1 30px</h1>
+<h2>h2 26px</h2>
+<h3>h3 22px</h3>
+<h4>h4 16px</h4>
+<h5>h5 12px</h5>
+<h6>h6 10px</h6>
+<p>Base font size</p>
+<p class="type-sm">type-sm 12px</p>
+<p class="type-xsm">type-sm 10px</p>
+```
+
+
+
+
+##### Colors
+
+```html_example
+<p class="type-brand-1">I am a brand color 1</p>
+<p class="type-brand-2">I am a brand color 2</p>
+```
+
+<div class="grid">
+  <div class="col-sm-12 col-md-6">
+    <p class="type-neutral-1">.type-neutral-1</p>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <p class="type-neutral-2">.type-neutral-2</p>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <p class="type-neutral-3">.type-neutral-3</p>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <p class="type-neutral-4">.type-neutral-4</p>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <p class="type-neutral-5">.type-neutral-5</p>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <p class="type-neutral-6">.type-neutral-6</p>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <p class="type-neutral-7">.type-neutral-7</p>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <p class="type-brand-1">.type-brand-1</p>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <p class="type-warn-1">.type-warn-1</p>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <p class="type-accent-1">.type-accent-1</p>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <p class="type-accent-2">.type-accent-2</p>
+  </div>
+</div>
+
+##### Emphasis Modifiers
+
+```html_example
+<h1 class="em-high">Important Text</h1>
+<h1 class="em-alt em-max">Very very important</h1>
+```
+
+*/
+
+
+$debugTypography: false;
+// set to true to turn on base line stripes
+
+/* ==========================================================================
+   Base Type
+   ========================================================================== */
+html {
+  font-size: 100%;
+}
+
+body {
+  font-size: $base-font-size;
+  font-family: $base-font-family;
+  color: black;
+  font-weight: 400;
+}
+
+body,
+input,
+select,
+textarea, 
+button {
+  font-family: $base-font-family;
+}
+
+/* ==========================================================================
+   Headings and paragraph
+   ========================================================================== */
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+    font-family: $base-header-family;
+  font-style: normal;
+  line-height: 1.3;
+  margin: 0.5em 0;
+}
+
+h1, .h1 {
+  font-size: 36px;
+}
+
+h2, .h2 {
+  font-size: 26px;
+}
+
+h3, .h3 {
+  font-size: 22px;
+}
+
+h4, .h4 {
+  font-size: 15px;
+}
+
+h5, .h5 {
+  font-size: 12px;
+}
+
+h6, .h6 {
+  font-size: 11px;
+
+  @include bp(screen-lg) {
+    font-size: 10px;
+  }
+}
+
+
+.type-sm {
+  font-size: 12px;
+
+  @include bp(screen-lg) {
+    font-size: 7px;
+  }
+}
+
+.type-xsm {
+  font-size: 11px;
+
+  @include bp(screen-lg) {
+    font-size: 7px;
+  }
+}
+
+
+
+
+p {
+    font-family: $base-p-family;
+  max-width: 50em;
+  margin: 0 auto;
+}
+
+p + p {
+  margin-top: 1em;
+}
+
+
+
+
+// Emphasis Modifiers
+.em-low {
+  font-weight: 100;
+}
+
+.em-default {
+  font-weight: 400;
+}
+
+.em-high {
+  font-weight: 600;
+}
+
+.em-max {
+  font-weight: 700;
+}
+
+.em-alt {
+  text-transform: uppercase;
+}
+
+
+
+
+// No Emphasis
+.no-em {
+  font-weight: 400;
+  text-transform: none;
+}
+
+
+.title-text{
+  text-align: center;
+  text-transform: uppercase;
+}

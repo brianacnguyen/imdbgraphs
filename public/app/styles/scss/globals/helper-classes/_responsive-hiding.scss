@@ -1,0 +1,47 @@
+/*------------------------------------*\
+    ~ RESPONSIVE HIDING
+\*------------------------------------*/
+
+/*
+ * This helper class helps hide objects at certain breakpoint
+ *
+ */
+
+
+ // Internally used mixin to quickly generate our different variants based upon
+ // the breakpoints defined in `settings.responsive`.
+
+ @mixin generate-responsive-hiding() {
+
+     // Loop through our previously-defined breakpoints.
+     @each $breakpoint in $breakpoints {
+
+         $generate-responsive-alias:      nth($breakpoint, 1) !global;
+         $generate-responsive-condition:  nth($breakpoint, 2);
+
+
+         @include bp($generate-responsive-alias) {
+             @content;
+         }
+
+
+         // Take the global variable back out of scope.
+         $generate-responsive-alias: null !global;
+
+     } // Close breakpoints loop.
+
+ }
+
+
+
+
+
+@include generate-responsive-hiding() {
+  .#{$generate-responsive-alias}-hide {
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+  }
+}
+
+

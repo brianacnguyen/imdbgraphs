@@ -4,6 +4,7 @@ angular.module("app", [
     'app.api.omdb',
     'app.services',
     'app.components.search',
+    'app.components.searchresults',
     'app.components.graph',
     'app.components.tv',
 ])
@@ -13,10 +14,26 @@ angular.module("app", [
         .state("home", {
             url: "/",
             views: {
+                "intro": {
+                    templateUrl: "/app/components/intro/intro.html",
+                },
                 "searchBar": {
                     templateUrl: "/app/components/search/search.html",
                     controller: "SearchController"
                 }
+            }
+        })
+        .state("search", {
+            url:"/search/{query}",
+            views: {
+                "searchBar": {
+                    templateUrl: "/app/components/search/search.html",
+                    controller: "SearchController"
+                },
+                "searchResults": {
+                    templateUrl: "/app/components/searchResults/searchResults.html",
+                    controller: "SearchResultsController"
+                },
             }
         })
         .state("tv", {

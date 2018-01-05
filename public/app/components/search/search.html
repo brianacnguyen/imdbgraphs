@@ -1,6 +1,6 @@
 <div>
     <form name="searchForm" novalidate ng-submit="searchSubmit(query)">
-        <input type="text" name="query" ng-model="query" required ng-class="{'error': searchForm.$dirty}"/>
+        <input type="text" name="query" ng-model="query" ng-change="searchChange(query)" required ng-class="{'error': searchForm.$dirty}"/>
         <button type="submit" ng-enabled="searchForm.$dirty">Search</button>
     </form>
     <div ng-if="searchForm.$dirty && !query">Search Term required</div>

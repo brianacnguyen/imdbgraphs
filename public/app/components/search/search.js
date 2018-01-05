@@ -2,8 +2,10 @@ angular.module('app.components.search', [])
     .controller("SearchController", function($scope, $location, TMDBAPI, SearchServices) {
         $scope.query = "";
         $scope.tvResults = [];
-        $scope.peopleResults = [];
         $scope.searchSubmit = function(query) {
+            $location.path('/search/' + query);
+        }
+        $scope.searchChange = function(query){
             TMDBAPI.getMultiSearch(query).then(function(resp) {
                 var results = resp.results;
                 $scope.tvResults = SearchServices.filterTVResults(results);
@@ -15,4 +17,5 @@ angular.module('app.components.search', [])
                 $location.path('/tv/' + imdbID)
             })
         }
+
     })

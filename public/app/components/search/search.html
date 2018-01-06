@@ -1,12 +1,14 @@
 <div class="search" ng-class="{home: currentPage == 'home'}">
-    <form name="searchForm" novalidate ng-submit="searchSubmit(query)">
-        <input type="text" name="query" ng-model="query" ng-change="searchChange(query)" required ng-class="{'error': searchForm.$dirty}" placeholder="Search TV Shows, People, and Collections"/>
+    <form name="searchForm" novalidate ng-submit="searchSubmit(query)" autocomplete="off">
+        <input type="text" name="query" ng-model="query" ng-change="searchChange(query)" required ng-class="{'error': searchForm.$dirty}" placeholder="Search TV Shows, People, and Collections" autocomplete="off"/>
         <button type="submit" ng-enabled="searchForm.$dirty">Search</button>
     </form>
-    <div ng-if="searchForm.$dirty && !query">Search Term required</div>
-</div>
-<div>
-    <li ng-repeat="tvResult in tvResults" ng-click="resultSelected(tvResult.id)">
-        <h1>{{tvResult.name}}</h1>
-    </li>
+    <div class="error" ng-if="searchForm.$dirty && !query">Search Term required</div>
+    <ul ng-show="tvResults.length > 0 && tmdbConfigurations">
+        <li ng-repeat="tvResult in tvResults" ng-click="resultSelected(tvResult.id)">
+            <img ng-if="tvResult['poster_path']" ng-src="{{tmdbConfigurations['images']['base_url'] + tmdbConfigurations['images']['logo_sizes'][0] + tvResult['poster_path']}}">
+            <h4>{{tvResult.name}}</h2>
+            <p>{{tvResult.overview}}</p>
+        </li>
+    </ul>
 </div>

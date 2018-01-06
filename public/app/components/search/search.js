@@ -6,10 +6,14 @@ angular.module('app.components.search', [])
             $location.path('/search/' + query);
         }
         $scope.searchChange = function(query){
-            TMDBAPI.getMultiSearch(query).then(function(resp) {
-                var results = resp.results;
-                $scope.tvResults = SearchServices.filterTVResults(results);
-            })
+            if (query) {
+                TMDBAPI.getMultiSearch(query).then(function(resp) {
+                    var results = resp.results;
+                    $scope.tvResults = SearchServices.filterTVResults(results);
+                })
+            } else {
+                $scope.tvResults = [];
+            }
         }
         $scope.resultSelected = function(tmdbID) {
             TMDBAPI.getTVExternalIds(tmdbID).then(function(resp) {
@@ -18,4 +22,5 @@ angular.module('app.components.search', [])
             })
         }
         $scope.currentPage = $state.current.name;
+        $scope.getImagePath = TMDBAPI.getImagePath;
     })

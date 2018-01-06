@@ -14,6 +14,7 @@
     outline-style: dotted;
     outline-width: 10px;
     outline-offset: -15px;
+    z-index: 1;
     @include transform(translateX(-50%));
     > h1 {
         font-size: 84px;

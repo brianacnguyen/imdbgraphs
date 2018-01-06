@@ -6,10 +6,23 @@ var TMDB_COLLECTION_SEARCH_PATH = "search/collection?language=en-US";
 var TMDB_SEARCH_PARAMS = "query=";
 var TMDB_TV_PATH = "tv/";
 var TMDB_EXTERNAL_IDS_PARAMS = "append_to_response=external_ids";
+var TMDB_CONFIGURATION_PATH = "https://api.themoviedb.org/3/configuration?";
+
 
 
 angular.module('app.api.tmdb', [])
-    .factory('TMDBAPI', function($http) {
+    .factory('TMDBAPI', function($http, $rootScope) {
+        var getImageConfiguration = function() {
+            var getURL = TMDB_CONFIGURATION_PATH + TMDB_API_KEY_PARAMS + TMDB_API_KEY;
+            $rootScope.tmdbConfigurations = {};
+            return $http({
+                    method: 'GET',
+                    url: getURL
+                })
+                .then(function(resp) {
+                    $rootScope.tmdbConfigurations = resp.data;
+                });
+        }
         var getMultiSearch = function(query) { 
             var getURL = TMDB_API_PATH + TMDB_MULTI_SEARCH_PATH + "&" + TMDB_API_KEY_PARAMS + TMDB_API_KEY + "&" + TMDB_SEARCH_PARAMS + query;
             return $http({
@@ -40,10 +53,16 @@ angular.module('app.api.tmdb', [])
                     return resp.data.external_ids;
                 });
         }
+        var getImagePath = function(baseUrl, imageSize, path) {
+            return baseUrl + imageSize + path;
+        }
+        getImageConfiguration();
         return {
             getMultiSearch: getMultiSearch,
             getCollectionSearch: getCollectionSearch,
-            getTVExternalIds: getTVExternalIds
+            getTVExternalIds: getTVExternalIds,
+            getImageConfiguration: getImageConfiguration,
+            getImagePath: getImagePath
         };
     })
 

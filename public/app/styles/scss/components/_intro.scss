@@ -1,0 +1,27 @@
+.intro {
+    position: relative;
+    display: block;
+    width: 940px;
+    left: 50%;
+    text-align: center;
+    padding: 35px;
+    background-color: $platinum;
+    margin-top: 100px;
+    margin-bottom: 50px;
+    border-radius: 3px;
+    border: solid 20px $ruddy-brown;
+    outline-color: $platinum;
+    outline-style: dotted;
+    outline-width: 10px;
+    outline-offset: -15px;
+    @include transform(translateX(-50%));
+    > h1 {
+        font-size: 84px;
+        color: $ruddy-brown;
+        margin: 0;
+    } > h3 {
+        font-size: 24px;
+        color: $jet;
+        margin: 0;
+    }
+}

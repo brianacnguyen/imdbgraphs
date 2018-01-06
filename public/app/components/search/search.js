@@ -1,5 +1,5 @@
 angular.module('app.components.search', [])
-    .controller("SearchController", function($scope, $location, TMDBAPI, SearchServices) {
+    .controller("SearchController", function($scope, $location, $state, TMDBAPI, SearchServices) {
         $scope.query = "";
         $scope.tvResults = [];
         $scope.searchSubmit = function(query) {
@@ -17,5 +17,5 @@ angular.module('app.components.search', [])
                 $location.path('/tv/' + imdbID)
             })
         }
-
+        $scope.currentPage = $state.current.name;
     })

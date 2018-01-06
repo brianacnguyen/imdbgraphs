@@ -130,13 +130,14 @@ angular.module('app.components.graph', [])
 
             var xAxis = d3.svg.axis()
                 .scale(xAxisScale)
-                .orient('bottom');
+                .orient('bottom')
+                .outerTickSize(0);
 
             /*append x axis*/
             svg.append('g')
                 .attr({
-                    'class': 'xaxis',
-                    'transform': 'translate(0,' + boardSettings.getYMin() + ')'
+                    'class': 'x axis',
+                    'transform': 'translate(0,' + boardSettings.getYMin() + ')',
                 })
                 .call(xAxis)
                 .append("text")
@@ -149,11 +150,12 @@ angular.module('app.components.graph', [])
             /*y axis*/
             var yAxis = d3.svg.axis()
                 .scale(yScale)
-                .orient('left');
+                .orient('left')
+                .outerTickSize(0);
             /*append y axis*/
             svg.append('g')
                 .attr({
-                    'class': 'yaxis',
+                    'class': 'y axis',
                     'transform': 'translate(' + boardSettings.getXMin() + ',0)'
                 })
                 .call(yAxis)

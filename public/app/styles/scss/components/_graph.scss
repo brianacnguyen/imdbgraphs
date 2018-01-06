@@ -1,0 +1,13 @@
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+.axis.y path {
+    display: none;
+}
+.axis.x > g:first-of-type {
+    display: none;
+}

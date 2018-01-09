@@ -63,9 +63,8 @@ angular.module('app.components.graph', [])
                             var season = parseInt(seasonNumber);
                             //fill the d3 dataset variables
                             if (epNum == 1) {
-                                currentTVShow.xAxisLabels["Season " + season] = currentTVShow.episodeCount;
                                 currentTVShow.seasonStarters.push(currentTVShow.episodeCount);
-                                currentTVShow.xAxisLabels.push("Season " + season);
+                                currentTVShow.xAxisLabels.push(season);
                             }
                             var episodeObj = {
                                 id: currentTVShow.episodeCount,
@@ -140,12 +139,12 @@ angular.module('app.components.graph', [])
                     'transform': 'translate(0,' + boardSettings.getYMin() + ')',
                 })
                 .call(xAxis)
-                // .append("text")
-                // .attr("y", -12)
-                // .attr("x", boardSettings.width - 35)
-                // .attr("dy", ".71em")
-                // .style("text-anchor", "end")
-                // .text("Episode");
+                .append("text")
+                .attr("y", -20)
+                .attr("x", boardSettings.width - 35)
+                .attr("class", "anchor-text")
+                .style("text-anchor", "end")
+                .text("Season");
 
             /*y axis*/
             var yAxis = d3.svg.axis()
@@ -162,6 +161,7 @@ angular.module('app.components.graph', [])
                 .append("text")
                 .attr("y", 5)
                 .attr("x", 40)
+                .attr("class", "anchor-text")
                 .attr("dy", ".71em")
                 .style("text-anchor", "end")
                 .text("IMDB Rating");

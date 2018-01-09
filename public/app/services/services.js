@@ -1,7 +1,6 @@
 angular.module('app.services', [])
     .factory('SearchServices', function() {
         var filterTVResults = function(results) {
-            console.log(results);
             return results.filter(function(result){
                 return result.media_type == "tv";
             })

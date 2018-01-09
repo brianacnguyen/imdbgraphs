@@ -1,0 +1,49 @@
+.searchResults {
+    position: relative;
+    display: block;
+    width: 940px;
+    left: 50%;
+    @include transform(translateX(-50%));
+    z-index: 1;
+    > h3 {
+        font-size: 36px;
+        color: $platinum;
+        margin: 0;
+        margin-bottom: 20px;
+    }
+    > .selectors {
+        position: relative;
+        display: block;
+        width: 100%;
+        font-size: 0;
+        z-index: 10;
+        > button {
+            position: relative;
+            display: inline-block;
+            width: 140px;
+            font-size: 24px;
+            background: transparent;
+            border: 0;
+            color: $platinum;
+            padding-bottom: 10px;
+            border-bottom: solid 1px $platinum;
+            outline: 0;
+        }
+    }
+    > .tvCards {
+        position: relative;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        margin-top: -1px;
+        width: 100%;
+        border-top: solid 1px $granite-gray;
+        z-index: 1;
+        font-size: 0;
+        -webkit-flex-flow: row wrap;
+        justify-content: space-between;
+        max-width: 100%;
+    }
+}

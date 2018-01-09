@@ -5,6 +5,7 @@ angular.module("app", [
     'app.services',
     'app.components.search',
     'app.components.searchresults',
+    'app.components.tvCard',
     'app.components.graph',
     'app.components.tv',
 ])
@@ -37,7 +38,7 @@ angular.module("app", [
             }
         })
         .state("tv", {
-            url: "/tv/{imdbID}",
+            url: "/tv/{tmdbID}",
             views: {
                 "searchBar": {
                     templateUrl: "/app/components/search/search.html",

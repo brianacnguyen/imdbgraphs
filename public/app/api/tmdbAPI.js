@@ -50,19 +50,15 @@ angular.module('app.api.tmdb', [])
                     url: getURL
                 })
                 .then(function(resp) {
-                    return resp.data.external_ids;
+                    return resp;
                 });
-        }
-        var getImagePath = function(baseUrl, imageSize, path) {
-            return baseUrl + imageSize + path;
         }
         getImageConfiguration();
         return {
             getMultiSearch: getMultiSearch,
             getCollectionSearch: getCollectionSearch,
             getTVExternalIds: getTVExternalIds,
-            getImageConfiguration: getImageConfiguration,
-            getImagePath: getImagePath
+            getImageConfiguration: getImageConfiguration
         };
     })
 

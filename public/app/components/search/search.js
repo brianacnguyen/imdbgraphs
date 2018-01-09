@@ -16,11 +16,7 @@ angular.module('app.components.search', [])
             }
         }
         $scope.resultSelected = function(tmdbID) {
-            TMDBAPI.getTVExternalIds(tmdbID).then(function(resp) {
-                var imdbID = resp.imdb_id;
-                $location.path('/tv/' + imdbID)
-            })
+            $location.path('/tv/' + tmdbID)
         }
         $scope.currentPage = $state.current.name;
-        $scope.getImagePath = TMDBAPI.getImagePath;
     })

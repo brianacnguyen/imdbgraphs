@@ -1,5 +1,5 @@
 angular.module('app.components.searchresults', [])
-    .controller("SearchResultsController", function($scope, $stateParams, $location, TMDBAPI, SearchServices) {
+    .controller("SearchResultsController", function($scope, $stateParams, $location, TMDBAPI, SearchServices, $rootScope) {
         $scope.tvResults = [];
         $scope.peopleResults = [];
         TMDBAPI.getMultiSearch($stateParams.query).then(function(resp) {
@@ -7,10 +7,7 @@ angular.module('app.components.searchresults', [])
             $scope.tvResults = SearchServices.filterTVResults(results);
         })
         $scope.resultSelected = function(tmdbID) {
-            TMDBAPI.getTVExternalIds(tmdbID).then(function(resp) {
-                var imdbID = resp.imdb_id;
-                $location.path('/tv/' + imdbID)
-            })
+            $location.path('/tv/' + tmdbID)
         }
     })
 

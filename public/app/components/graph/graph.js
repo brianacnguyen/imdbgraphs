@@ -86,9 +86,9 @@ angular.module('app.components.graph', [])
             //This reveals data when you mouse over nodes.
             var tip = d3.tip()
                 .attr('class', 'd3-tip')
-                .offset([-10, 0])
+                .offset([-55, 0])
                 .html(function(d) {
-                    return "<strong>Title:</strong> <span style='color:#2FFF4D'>" + d.title + "</span>" + "<br>" + "<strong>Rating:</strong> <span style='color:#2FFF4D'>" + d.rating + "</span>" + "<br>" + "<strong>Season:</strong> <span style='color:#2FFF4D'>" + d.season + "</span>" + "<br>" + "<strong>Episode:</strong> <span style='color:#2FFF4D'>" + d.episode + "</span>";
+                    return "<h3 class='title'>" + d.title + "</h3> <span class='episode-id'>Season " + d.season + " Episode " + d.episode + "</span> <h1 class='rating'>" + d.rating + "</h1>" ;
                 });
 
             //Define Graph Space, Initialize d3 (This sets how big the div is)
@@ -140,12 +140,12 @@ angular.module('app.components.graph', [])
                     'transform': 'translate(0,' + boardSettings.getYMin() + ')',
                 })
                 .call(xAxis)
-                .append("text")
-                .attr("y", -12)
-                .attr("x", boardSettings.width - 35)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end")
-                .text("Episode");
+                // .append("text")
+                // .attr("y", -12)
+                // .attr("x", boardSettings.width - 35)
+                // .attr("dy", ".71em")
+                // .style("text-anchor", "end")
+                // .text("Episode");
 
             /*y axis*/
             var yAxis = d3.svg.axis()
@@ -170,7 +170,7 @@ angular.module('app.components.graph', [])
             var points = svg.selectAll('circle')
                 .data(currentTVShow.episodesList)
                 .enter()
-                .append('circle');
+                .append('circle')
 
             /*point attributes*/
             points.attr('cy', 0)
@@ -188,24 +188,17 @@ angular.module('app.components.graph', [])
                         return yScale(d.rating);
                     },
                     'r': boardSettings.getPointsRadius(currentTVShow.episodeCount),
-                    'class': 'datapoint',
+                    'class': 'graph-node',
                     'id': function(d, i) {
                         return i;
                     }
                 })
                 .style('opacity', 1);
-
-            d3.select('#graph svg')
-                .append("text")
-                .attr("x", boardSettings.width / 2)
-                .attr("y", 14)
-                .attr("text-anchor", "middle")
-                .style("fill", "#2FFF4D")
-                .text(currentTVShow.Title);
-
+            
+            var tipShown = false;
             svg.selectAll('circle').data(currentTVShow.episodesList).on('mouseover', tip.show).on('mouseout', tip.hide);
 
-            var trendLine = function() {
+            var drawTrendLine = function() {
                 var x1 = 0;
                 var y1 = 0;
                 var x2 = 0;
@@ -252,11 +245,11 @@ angular.module('app.components.graph', [])
                     .attr("y2", function(d) {
                         return yScale(d[3]);
                     })
-                    .style("stroke", "rgb(47,255,77)")
+                    .style("stroke", "white")
             };
             //d3.select('#graph svg').text('');
             if (currentTVShow["Title"] !== undefined) {
-                trendLine();
+                drawTrendLine();
             }
         };
         return {
@@ -267,7 +260,7 @@ angular.module('app.components.graph', [])
     .directive('graph', function($parse, $window) {
         return {
             restrict: 'EA',
-            template: '<section class="graph"><div id="graph"></div></section>',
+            templateUrl: "/app/components/graph/graph.html",
             link: function(scope, elem, attrs) {}
         };
     });

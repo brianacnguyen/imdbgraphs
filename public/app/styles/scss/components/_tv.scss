@@ -1,0 +1,52 @@
+.tv {
+    position: relative;
+    display: block;
+    padding: 50px 0;
+    z-index: 1;
+    > .background {
+        position: absolute;
+        display: block;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background-size: cover;
+        filter: opacity(100) grayscale(100%) contrast(130%);
+        z-index: 1;
+    }
+    > .overlay {
+        position: absolute;
+        display: block;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background-color: $ruddy-brown;
+        opacity: 0.8;
+        z-index: 2;
+    }
+    > .name {
+        position: relative;
+        display: block;
+        width: 940px;
+        left: 50%;
+        text-align: left;
+        z-index: 10;
+        color: white;
+        @include transform(translateX(-50%));
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+    > .overview {
+        position: relative;
+        display: block; 
+        width: 940px;
+        left: 50%;
+        text-align: left;
+        z-index: 10;
+        color: white;
+        @include transform(translateX(-50%));
+        font-size: 16px;
+        margin-bottom: 50px;
+    }
+}

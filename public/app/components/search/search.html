@@ -6,7 +6,7 @@
     <div class="error" ng-if="searchForm.$dirty && !query">Search Term required</div>
     <ul ng-show="tvResults.length > 0 && tmdbConfigurations">
         <li ng-repeat="tvResult in tvResults" ng-click="resultSelected(tvResult.id)">
-            <img ng-if="tvResult['poster_path']" ng-src="{{tmdbConfigurations['images']['base_url'] + tmdbConfigurations['images']['logo_sizes'][0] + tvResult['poster_path']}}">
+            <img ng-if="tvResult['poster_path']" ng-src="{{tmdbConfigurations['images']['base_url'] + tmdbConfigurations['images']['poster_sizes'][0] + tvResult['poster_path']}}">
             <h4>{{tvResult.name}}</h2>
             <p>{{tvResult.overview}}</p>
         </li>

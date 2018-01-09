@@ -3,6 +3,8 @@ angular.module('app.components.tv', ['app.components.graph'])
         var currentTVShow = {};
         currentTVShow = TVGraph.initializeTVShowDefaults(currentTVShow);
         $scope.currentTVDetail = {};
+        $scope.loading = false;
+        $scope.loadingMessage = "Loading...";
         var getTVRatings = function(imdbID, currentSeason) {
             currentSeason = currentSeason || 1;
             if (currentSeason <= currentTVShow.seasonCount) {
@@ -16,8 +18,12 @@ angular.module('app.components.tv', ['app.components.graph'])
                     currentTVShow.seasonCount = Number(resp["totalSeasons"]);
                     currentSeason = Number(resp["Season"]);
                     if (currentSeason == currentTVShow.seasonCount) {
+                        $scope.loading = false;
+                        $scope.loadingMessage = "Loading...";
                         TVGraph.drawGraph(currentTVShow);
                     } else {
+                        $scope.loading = true;
+                        $scope.loadingMessage = "Now loading data for season " + (currentSeason + 1) + "...";
                         getTVRatings(imdbID, currentSeason + 1)
                     }
                 })

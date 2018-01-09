@@ -4157,8 +4157,7 @@ table h1, table h2, table h3, table h4, table h5, table h6, table p, table ul, t
   fill: white; }
 
 .graph-node {
-  fill: white;
-  opacity: 0.8; }
+  fill: white; }
   .graph-node:hover {
     opacity: 1; }
 
@@ -4215,6 +4214,20 @@ table h1, table h2, table h3, table h4, table h5, table h6, table p, table ul, t
     transform: translateX(-50%);
     font-size: 16px;
     margin-bottom: 50px; }
+  .tv .loading {
+    position: relative;
+    display: block;
+    width: 940px;
+    left: 50%;
+    text-align: center;
+    z-index: 10;
+    color: white;
+    -ms-transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    transform: translateX(-50%);
+    font-size: 36px;
+    margin-bottom: 10px; }
 
 .tvCard {
   position: relative;

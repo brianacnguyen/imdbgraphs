@@ -172,6 +172,9 @@ angular.module('app.components.graph', [])
                 .enter()
                 .append('circle')
 
+            var opacityScale = d3.scale.linear()
+                .domain([currentTVShow.ratingsList[0] - 0.2, currentTVShow.ratingsList[currentTVShow.ratingsList.length - 1] + 0.1])
+                .range([boardSettings.getYMax()/boardSettings.getYMin(), 1]);
             /*point attributes*/
             points.attr('cy', 0)
                 .transition()
@@ -191,9 +194,11 @@ angular.module('app.components.graph', [])
                     'class': 'graph-node',
                     'id': function(d, i) {
                         return i;
-                    }
+                    },
                 })
-                .style('opacity', 1);
+                .style('opacity', function(d) {
+                    return opacityScale(d.rating);
+                });
             
             var tipShown = false;
             svg.selectAll('circle').data(currentTVShow.episodesList).on('mouseover', tip.show).on('mouseout', tip.hide);

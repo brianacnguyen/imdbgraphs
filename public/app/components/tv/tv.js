@@ -15,10 +15,12 @@ angular.module('app.components.tv', ['app.components.graph'])
                     resultsObj['Seasons'][currentSeason.toString()] = resp["Episodes"];
                     $scope.currentTVShow.seasonCount = parseInt(resp["totalSeasons"]);
                     currentSeason = parseInt(resp["Season"]);
-                    getTVRatings(imdbID, resultsObj, currentSeason + 1)
                     $scope.currentTVShow = resultsObj;
                     if (currentSeason == $scope.currentTVShow.seasonCount) {
                         TVGraph.drawGraph($scope.currentTVShow);
+                    } else {
+                        currentSeason ++;
+                        getTVRatings(imdbID, resultsObj, currentSeason)
                     }
                 })
             }

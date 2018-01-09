@@ -1,4 +1,4 @@
-var OMDB_API_PATH = "http://www.omdbapi.com/?";
+var OMDB_API_PATH = "https://www.omdbapi.com/?";
 var OMDB_API_KEY_PARAMS = "apikey=";
 var OMDB_API_KEY = "a2798ed6";
 var OMDB_IMDBID_PARAMS = "i=";

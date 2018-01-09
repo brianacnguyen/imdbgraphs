@@ -1,26 +1,24 @@
 angular.module('app.components.tv', ['app.components.graph'])
     .controller("TVController", function($scope, $stateParams, TMDBAPI, OMDBAPI, TVGraph) {
-        $scope.currentTVShow = {};
-        $scope.currentTVShow = TVGraph.initializeTVShowDefaults($scope.currentTVShow);
+        var currentTVShow = {};
+        currentTVShow = TVGraph.initializeTVShowDefaults(currentTVShow);
         $scope.currentTVDetail = {};
-        var getTVRatings = function(imdbID, resultsObj, currentSeason) {
+        var getTVRatings = function(imdbID, currentSeason) {
             currentSeason = currentSeason || 1;
-            if (currentSeason <= $scope.currentTVShow.seasonCount) {
+            if (currentSeason <= currentTVShow.seasonCount) {
                 OMDBAPI.getTVSeasonRatings(imdbID, currentSeason).then(function(resp) {
-                    if (!resultsObj['Seasons']) {
-                        resultsObj['Title'] = resp['Title'];
-                        resultsObj['Seasons'] = {};
+                    if (!currentTVShow['Seasons']) {
+                        currentTVShow['Title'] = resp['Title'];
+                        currentTVShow['Seasons'] = {};
                     }
                     // console.log(resp)
-                    resultsObj['Seasons'][currentSeason.toString()] = resp["Episodes"];
-                    $scope.currentTVShow.seasonCount = parseInt(resp["totalSeasons"]);
-                    currentSeason = parseInt(resp["Season"]);
-                    $scope.currentTVShow = resultsObj;
-                    if (currentSeason == $scope.currentTVShow.seasonCount) {
-                        TVGraph.drawGraph($scope.currentTVShow);
+                    currentTVShow['Seasons'][currentSeason.toString()] = resp["Episodes"];
+                    currentTVShow.seasonCount = Number(resp["totalSeasons"]);
+                    currentSeason = Number(resp["Season"]);
+                    if (currentSeason == currentTVShow.seasonCount) {
+                        TVGraph.drawGraph(currentTVShow);
                     } else {
-                        currentSeason ++;
-                        getTVRatings(imdbID, resultsObj, currentSeason)
+                        getTVRatings(imdbID, currentSeason + 1)
                     }
                 })
             }
@@ -28,7 +26,7 @@ angular.module('app.components.tv', ['app.components.graph'])
         TMDBAPI.getTVExternalIds($stateParams.tmdbID).then(function(resp) {
                 var imdbID = resp.data.external_ids.imdb_id;
                 $scope.currentTVDetail = resp.data;
-                getTVRatings(imdbID, {});
+                getTVRatings(imdbID);
             })
     })
 

@@ -53,18 +53,19 @@ angular.module('app.components.graph', [])
             var seasons = currentTVShow["Seasons"] || {};
             if (seasons) {
                 for (var seasonNumber in seasons) {
-                    var season = seasons[seasonNumber];
+                    var season = 0;
                     season.forEach(function(episode) {
                         if (episode["imdbRating"] !== "N/A") {
                             //get episode data
                             var epNum = parseInt(episode["Episode"]);
                             var rating = parseFloat(episode["imdbRating"]);
                             var episodeTitle = episode["Title"];
-                            var season = parseInt(seasonNumber);
+                            var currentSeason = parseInt(seasonNumber);
                             //fill the d3 dataset variables
-                            if (epNum == 1) {
+                            if (currentSeason !== season) {
                                 currentTVShow.seasonStarters.push(currentTVShow.episodeCount);
                                 currentTVShow.xAxisLabels.push(season);
+                                season = currentSeason;
                             }
                             var episodeObj = {
                                 id: currentTVShow.episodeCount,

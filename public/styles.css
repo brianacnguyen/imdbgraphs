@@ -4207,7 +4207,7 @@ table h1, table h2, table h3, table h4, table h5, table h6, table p, table ul, t
     left: 50%;
     text-align: left;
     z-index: 10;
-    color: white;
+    color: #e5dfd6;
     -ms-transform: translateX(-50%);
     -webkit-transform: translateX(-50%);
     -moz-transform: translateX(-50%);

@@ -182,7 +182,7 @@ angular.module('app.components.graph', [])
                 .transition()
                 .duration(100)
                 .delay(function(d, i) {
-                    return (i * 100) + 500;
+                    return (2500 * i / currentTVShow.ratingsList.length) + 500;
                 })
                 .ease('elastic')
                 .attr({

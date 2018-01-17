@@ -22,6 +22,11 @@ angular.module('app.components.graph', [])
                 } else {
                     return widthPerPoint;
                 }
+            },
+            pointsDelayStart: 500,
+            pointsDelayTotalTime: 2500,
+            getPointsDelay: function(index, totalPoints) {
+                return (this.pointsDelayTotalTime * index / totalPoints) + this.pointsDelayStart;
             }
         };
         ////////////////////////////////////////////////
@@ -182,7 +187,7 @@ angular.module('app.components.graph', [])
                 .transition()
                 .duration(100)
                 .delay(function(d, i) {
-                    return (2500 * i / currentTVShow.ratingsList.length) + 500;
+                    return boardSettings.getPointsDelay(i, currentTVShow.ratingsList.length);
                 })
                 .ease('elastic')
                 .attr({

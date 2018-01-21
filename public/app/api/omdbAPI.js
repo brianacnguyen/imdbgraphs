@@ -6,6 +6,16 @@ var OMDB_SEASON_PARAMS = "Season=";
 
 angular.module('app.api.omdb', [])
     .factory('OMDBAPI', function($http) {
+        var getIMDBRating = function(imdbID) {
+            var getURL = OMDB_API_PATH + OMDB_API_KEY_PARAMS + OMDB_API_KEY + "&" + OMDB_IMDBID_PARAMS + imdbID;
+            return $http({
+                    method: 'GET',
+                    url: getURL
+                })
+                .then(function(resp) {
+                    return resp.data;
+                });
+        }
         var getTVSeasonRatings = function(imdbID, seasonNumber) {
             var getURL = OMDB_API_PATH + OMDB_API_KEY_PARAMS + OMDB_API_KEY + "&" + OMDB_IMDBID_PARAMS + imdbID + "&" + OMDB_SEASON_PARAMS + seasonNumber;
             return $http({
@@ -16,8 +26,8 @@ angular.module('app.api.omdb', [])
                     return resp.data;
                 });
         }
-
         return {
+            getIMDBRating: getIMDBRating,
             getTVSeasonRatings: getTVSeasonRatings
         };
     })

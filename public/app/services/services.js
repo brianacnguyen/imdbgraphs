@@ -4,9 +4,15 @@ angular.module('app.services', [])
             return results.filter(function(result){
                 return result.media_type == "tv";
             })
-        } 
+        }
+        var filterPeopleResults = function(results) {
+            return results.filter(function(result){
+                return result.media_type == "person";
+            })
+        }
         return {
-            filterTVResults: filterTVResults
+            filterTVResults: filterTVResults,
+            filterPeopleResults: filterPeopleResults
         };
     })
     .factory('TvServices', function(OMDBAPI) {

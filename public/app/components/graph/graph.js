@@ -34,67 +34,17 @@ angular.module('app.components.graph', [])
         /* TV SHOW */
 
         ////////////////////////////////////////////////
-        var initializeTVShowDefaults = function(currentTVShow) {
-            currentTVShow = currentTVShow || {};
-            currentTVShow.episodeCount = 1;
-            currentTVShow.episodesList = [];
-            currentTVShow.seasonCount = 1;
-            currentTVShow.xAxisLabels = [];
-            currentTVShow.seasonStarters = [];
-            currentTVShow.ratingsList = [];
-            return currentTVShow;
-        }
-
-        ////////////////////////////////////////////////
 
         /* DRAW GRAPH FUNCTION */
 
         ////////////////////////////////////////////////
         var drawGraph = function(currentTVShow) {
-
-
-            currentTVShow = initializeTVShowDefaults(currentTVShow);
-
-            var seasons = currentTVShow["Seasons"] || {};
-            if (seasons) {
-                var seasonTracker = 0;
-                for (var seasonNumber in seasons) {
-                    var season = seasons[seasonNumber];
-                    season.forEach(function(episode) {
-                        if (episode["imdbRating"] !== "N/A") {
-                            //get episode data
-                            var epNum = parseInt(episode["Episode"]);
-                            var rating = parseFloat(episode["imdbRating"]);
-                            var episodeTitle = episode["Title"];
-                            var currentSeasonNumber = parseInt(seasonNumber);
-                            //fill the d3 dataset variables
-                            if (currentSeasonNumber !== seasonTracker) {
-                                currentTVShow.seasonStarters.push(currentTVShow.episodeCount);
-                                currentTVShow.xAxisLabels.push(currentSeasonNumber);
-                                seasonTracker = currentSeasonNumber;
-                            }
-                            var episodeObj = {
-                                id: currentTVShow.episodeCount,
-                                rating: rating,
-                                title: episodeTitle,
-                                season: currentSeasonNumber,
-                                episode: epNum
-                            }
-                            currentTVShow.episodesList.push(episodeObj);
-                            currentTVShow.ratingsList.push(rating);
-                            currentTVShow.episodeCount++;
-                        }
-                    })
-                }
-            }
-
-
             //This reveals data when you mouse over nodes.
             var tip = d3.tip()
                 .attr('class', 'd3-tip')
                 .offset([-55, 0])
                 .html(function(d) {
-                    return "<h3 class='title'>" + d.title + "</h3> <span class='episode-id'>Season " + d.season + " Episode " + d.episode + "</span> <h1 class='rating'>" + d.rating + "</h1>" ;
+                    return "<h3 class='title'>" + d.title + "</h3> <span class='episode-id'>Season " + d.seasonNumber + " Episode " + d.episodeNumber + "</span> <h1 class='rating'>" + d.rating + "</h1>" ;
                 });
 
             //Define Graph Space, Initialize d3 (This sets how big the div is)
@@ -112,27 +62,26 @@ angular.module('app.components.graph', [])
             //Define Grid (inside), Initialize Scale and Axes of Graph (Using "g" element, tutorial here --> http://tutorials.jenkov.com/svg/g-element.html)
             /*x scale*/
             var xScale = d3.scale.linear()
-                .domain([0, currentTVShow.episodesList.length])
+                .domain([0, currentTVShow.episodes.length])
                 .range([boardSettings.getXMin(), boardSettings.getXMax()]);
 
             /*y scale*/ //based on rating data set
-            currentTVShow.ratingsList.sort();
             var yScale = d3.scale.linear()
-                .domain([currentTVShow.ratingsList[0] - 0.2, currentTVShow.ratingsList[currentTVShow.ratingsList.length - 1] + 0.1])
+                .domain([currentTVShow.sortedRatings[0].rating - 0.2, currentTVShow.sortedRatings[currentTVShow.sortedRatings.length - 1].rating + 0.1])
                 .range([boardSettings.getYMin(), boardSettings.getYMax()]);
 
             /*x axis*/
-            currentTVShow.seasonStarters = currentTVShow.seasonStarters.map(function(episodeNum) {
+            currentTVShow.xAxisIds = currentTVShow.xAxisIds.map(function(episodeNum) {
                 return xScale(episodeNum);
             })
-            currentTVShow.seasonStarters.unshift(boardSettings.getXMin());
-            currentTVShow.seasonStarters.push(boardSettings.getXMax());
+            currentTVShow.xAxisIds.unshift(boardSettings.getXMin());
+            currentTVShow.xAxisIds.push(boardSettings.getXMax());
             currentTVShow.xAxisLabels.unshift("");
             currentTVShow.xAxisLabels.push("");
 
             var xAxisScale = d3.scale.ordinal()
                 .domain(currentTVShow.xAxisLabels)
-                .range(currentTVShow.seasonStarters);
+                .range(currentTVShow.xAxisIds);
 
             var xAxis = d3.svg.axis()
                 .scale(xAxisScale)
@@ -175,19 +124,19 @@ angular.module('app.components.graph', [])
 
             /*add points*/
             var points = svg.selectAll('circle')
-                .data(currentTVShow.episodesList)
+                .data(currentTVShow.episodes)
                 .enter()
                 .append('circle')
 
             var opacityScale = d3.scale.linear()
-                .domain([currentTVShow.ratingsList[0] - 0.2, currentTVShow.ratingsList[currentTVShow.ratingsList.length - 1] + 0.1])
+                .domain([currentTVShow.sortedRatings[0].rating - 0.2, currentTVShow.sortedRatings[currentTVShow.sortedRatings.length - 1].rating + 0.1])
                 .range([boardSettings.getYMax()/boardSettings.getYMin(), 1]);
             /*point attributes*/
             points.attr('cy', 0)
                 .transition()
                 .duration(100)
                 .delay(function(d, i) {
-                    return boardSettings.getPointsDelay(i, currentTVShow.ratingsList.length);
+                    return boardSettings.getPointsDelay(i, currentTVShow.sortedRatings.length);
                 })
                 .ease('elastic')
                 .attr({
@@ -195,9 +144,13 @@ angular.module('app.components.graph', [])
                         return xScale(d.id);
                     },
                     'cy': function(d) {
-                        return yScale(d.rating);
+                        if (isNaN(d.rating)) {
+                            return 0;
+                        } else {
+                            return yScale(d.rating);
+                        }
                     },
-                    'r': boardSettings.getPointsRadius(currentTVShow.episodeCount),
+                    'r': boardSettings.getPointsRadius(currentTVShow.episodes.length),
                     'class': 'graph-node',
                     'id': function(d, i) {
                         return i;
@@ -205,26 +158,33 @@ angular.module('app.components.graph', [])
                 })
                 .style('opacity', function(d) {
                     return opacityScale(d.rating);
+                })
+                .style('display', function(d) {
+                    if (isNaN(d.rating)) {
+                        return "none"
+                    }
                 });
             
             var tipShown = false;
-            svg.selectAll('circle').data(currentTVShow.episodesList).on('mouseover', tip.show).on('mouseout', tip.hide);
+            svg.selectAll('circle').data(currentTVShow.episodes).on('mouseover', tip.show).on('mouseout', tip.hide);
 
             var drawTrendLine = function() {
                 var x1 = 0;
                 var y1 = 0;
                 var x2 = 0;
                 var y2 = 0;
-                var len = currentTVShow.episodesList.length;
+                var len = currentTVShow.episodes.length;
                 var xLabels = [];
                 var ySeries = [];
-                currentTVShow.episodesList.forEach(function(episode) {
-                    x1 += episode.id;
-                    y1 += episode.rating;
-                    x2 += (episode.id * episode.rating);
-                    y2 += (episode.id * episode.id);
-                    xLabels.push(episode.id);
-                    ySeries.push(episode.rating);
+                currentTVShow.episodes.forEach(function(episode) {
+                    if (!isNaN(episode.rating)) {
+                        x1 += episode.id;
+                        y1 += episode.rating;
+                        x2 += (episode.id * episode.rating);
+                        y2 += (episode.id * episode.id);
+                        xLabels.push(episode.id);
+                        ySeries.push(episode.rating);
+                    }
                 })
                 var xSeries = d3.range(1, xLabels.length + 1);
 
@@ -259,13 +219,12 @@ angular.module('app.components.graph', [])
                     })
                     .style("stroke", "white")
             };
-            //d3.select('#graph svg').text('');
-            if (currentTVShow["Title"] !== undefined) {
+            // d3.select('#graph svg').text('');
+            if (currentTVShow["name"]) {
                 drawTrendLine();
             }
         };
         return {
-            initializeTVShowDefaults: initializeTVShowDefaults,
             drawGraph: drawGraph
         };
     })

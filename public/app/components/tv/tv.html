@@ -1,8 +1,8 @@
 <div class="tv">
-    <div class="background" style="background-image: url('{{tmdbConfigurations['images']['base_url'] + tmdbConfigurations['images']['backdrop_sizes'][2] + currentTVDetail['backdrop_path']}}')"> </div>
+    <div class="background" style="background-image: url('{{tmdbConfigurations['images']['base_url'] + tmdbConfigurations['images']['backdrop_sizes'][2] + currentTVShow['backdrop']}}')"> </div>
     <div class="overlay"> </div>
-    <h1 class="name">{{currentTVDetail['name']}}</h1>
-    <div class="overview">{{currentTVDetail['overview']}}</div>
+    <h1 class="name">{{currentTVShow['name']}}</h1>
+    <div class="overview">{{currentTVShow['overview']}}</div>
     <div class="loading" ng-show="loading">{{loadingMessage}}</div>
     <graph></graph>
 </div>
